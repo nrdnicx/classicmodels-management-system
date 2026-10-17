@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+    <title>Customers</title>
+  </head>
+  <body>
+    <div class="container">
+      <section class="content-header mt-4 overflow-hidden">
+        <h1>Customers</h1>
+        <a href="/customers/add-new" class="btn btn-success float-end">
+          Add New
+        </a>
+      </section>
+      <div class="box box-primary" style="margin: 5px; padding: 5px">
+        <div class="box-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Customer Number</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% user_list.forEach(function(result) { %>
+                <tr>
+                  <td><%= result.customerNumber %></td>
+                  <td>
+                    <%= result.contactFirstName + " " + result.contactLastName%>
+                  </td>
+                  <td><%= result.phone %></td>
+                  <td><%= result.addressLine1 %></td>
+                  <td class="d-flex justify-content-center">
+                    <a
+                      class="btn btn-warning m-1"
+                      href="/customers/update/<%= result.customerNumber %>"
+                    >
+                      Edit
+                    </a>
+                    <form
+                      method="post"
+                      action="/customers/<%= result.customerNumber %>?_method=DELETE"
+                    >
+                      <button
+                        type="submit"
+                        class="btn btn-danger m-1"
+                        onClick="return confirm('Are you sure you want to delete?')"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <%- include('./partials/scripts') %>
+</html>

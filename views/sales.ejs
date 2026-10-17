@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <%- include("./partials/head") %>
+  </head>
+  <body>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row justify-content-end p-2">
+          <div class="col-6">
+            <select id="selYear" class="form-select">
+              <option value="2002">2002</option>
+              <option value="2003">2003</option>
+              <option value="2004">2004</option>
+              <option value="2005">2005</option>
+            </select>
+          </div>
+        </div>
+        <div id="chart"></div>
+      </div>
+    </div>
+  </body>
+  <%- include("./partials/scripts") %>
+  <script>
+    const data = JSON.parse(`<%- JSON.stringify(data) %>`);
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    var options = {
+      series: [
+        {
+          name: "Sales",
+          data: alignMonth(data, months),
+        },
+      ],
+      chart: {
+        height: 350,
+        type: "bar",
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 10,
+          dataLabels: {
+            position: "top", // top, center, bottom
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        offsetY: -20,
+        style: {
+          fontSize: "12px",
+          colors: ["#304758"],
+        },
+      },
+
+      xaxis: {
+        categories: months,
+        position: "top",
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        crosshairs: {
+          fill: {
+            type: "gradient",
+            gradient: {
+              colorFrom: "#D8E3F0",
+              colorTo: "#BED1E6",
+              stops: [0, 100],
+              opacityFrom: 0.4,
+              opacityTo: 0.5,
+            },
+          },
+        },
+        tooltip: {
+          enabled: true,
+        },
+      },
+      yaxis: {
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        labels: {
+          show: false,
+        },
+      },
+      title: {
+        text: "Monthly Sales",
+        floating: true,
+        offsetY: 330,
+        align: "center",
+        style: {
+          color: "#444",
+        },
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#chart"), options);
+    chart.render();
+
+    $("#selYear").on("change", function () {
+      $.ajax({
+        url: "http://localhost:3000/sales",
+        method: "POST",
+        data: {
+          year: $(this).val(),
+        },
+        dataType: "json",
+        success: (res) => {
+          const newData = alignMonth(res.data, months);
+          chart.updateSeries([
+            {
+              data: newData,
+            },
+          ]);
+        },
+      });
+    });
+
+    function alignMonth(data, months) {
+      const newData = new Array(months.length).fill(0);
+
+      for (let i = 0; i < months.length; i++) {
+        if (data[i]) {
+          newData[data[i].month - 1] = data[i].total_sales;
+        }
+      }
+
+      return newData;
+    }
+  </script>
+</html>

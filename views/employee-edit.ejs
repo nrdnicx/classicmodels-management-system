@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Employee</title>
+    <style>
+      form {
+        width: 50%;
+      }
+      input {
+        width: 100%;
+        margin-bottom: 0.3rem;
+      }
+      button {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h4>Edit Employee</h4>
+      <% if (data) { %>
+      <form
+        action="/employees/<%= locals.data[0].employeeNumber %>?_method=PUT"
+        method="POST"
+      >
+        <label>First Name</label>
+        <input
+          type="text"
+          name="firstName"
+          value="<%= locals.data[0].firstName %>"
+          required
+        />
+        <label>Last Name</label>
+        <input
+          type="text"
+          name="lastName"
+          value="<%= locals.data[0].lastName %>"
+          required
+        />
+        <label>Job Title</label>
+        <input
+          type="text"
+          name="jobTitle"
+          value="<%= locals.data[0].jobTitle %>"
+          required
+        />
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          value="<%= locals.data[0].email %>"
+          required
+        />
+
+        <button type="submit">Submit</button>
+        <button type="button">Cancel</button>
+      </form>
+      <% } %>
+    </div>
+  </body>
+</html>

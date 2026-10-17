@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee List</title>
+    <style>
+      table,
+      th,
+      td {
+        border: 1px solid black;
+        padding: 1rem;
+      }
+
+      table {
+        border-collapse: collapse;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <a
+        href="/employees/add-new"
+        style="margin-bottom: 0.3rem; float: right; margin-right: 1rem"
+      >
+        New Employee
+      </a>
+      <h4>Employee List</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Employee Number</th>
+            <th>Name</th>
+            <th>Job Title</th>
+            <th>Email</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if(data){ %> <% data.forEach(function(employee) { %>
+          <tr>
+            <td><%= employee.employeeNumber %></td>
+            <td><%= employee.firstName + " " + employee.lastName %></td>
+            <td><%= employee.jobTitle %></td>
+            <td><%= employee.email %></td>
+            <td>
+              <a href="/employees/<%= employee.employeeNumber %>">Edit</a>
+              <form
+                action="/employees/<%= employee.employeeNumber %>?_method=DELETE"
+                method="POST"
+              >
+                <button
+                  type="submit"
+                  onClick="return confirm('Are you sure you want to delete?')"
+                >
+                  Delete
+                </button>
+              </form>
+            </td>
+          </tr>
+          <% }) %> <% } %>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

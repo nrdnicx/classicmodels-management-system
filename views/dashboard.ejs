@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <%- include('./partials/head') %>
+    <title>Dashboard</title>
+  </head>
+  <body>
+    <div class="container-fuild p-3">
+      <div class="row">
+        <div class="col-md-6">
+          <div id="barChart"></div>
+        </div>
+        <div class="col-md-6">
+          <div id="lineChart"></div>
+        </div>
+        <div class="col-md-6">
+          <div id="pieChart"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <%- include('./partials/scripts') %>
+  <script>
+    test2();
+    async function test() {
+      const data = await fetch("http://localhost:3000/dashboard/data/").then(
+        (response) => response.json()
+      );
+
+      console.log(data);
+    }
+
+    async function test2() {
+      const data = await $.ajax({
+        url: "http://localhost:3000/dashboard/data/",
+        method: "GET",
+        dataType: "JSON",
+        success: (data) => data,
+      });
+
+      console.log(data);
+    }
+
+    const data = JSON.parse(`<%- JSON.stringify(data) %>`);
+
+    const lineChartData = data.length
+      ? data.map((d) => {
+          const totalCount = data.reduce(
+            (sum, d) => sum + Number(d.total_sales),
+            0
+          );
+
+          const percentage = (Number(d.total_sales) / totalCount) * 100;
+
+          return Math.round((percentage + Number.EPSILON) * 100) / 100;
+        })
+      : [];
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    let newData = new Array(months.length).fill(0);
+
+    for (let i = 0; i <= months.length; i++) {
+      if (data[i]) {
+        newData[Number(data[i].month) - 1] = data[i].total_sales;
+      }
+    }
+
+    var barOptions = {
+      series: [
+        {
+          name: "Sales",
+          data: newData,
+        },
+      ],
+      chart: {
+        type: "bar",
+        width: "100%",
+        height: 350,
+        stacked: true,
+      },
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: "55%",
+          endingShape: "rounded",
+          borderRadius: 10,
+          dataLabels: {
+            position: "top",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        offsetY: -20,
+        style: {
+          fontSize: "12px",
+          colors: ["#304758"],
+        },
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ["transparent"],
+      },
+      xaxis: {
+        categories: months,
+        position: "top",
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        crosshairs: {
+          fill: {
+            type: "gradient",
+            gradient: {
+              colorFrom: "#D8E3F0",
+              colorTo: "#BED1E6",
+              stops: [0, 100],
+              opacityFrom: 0.4,
+              opacityTo: 0.5,
+            },
+          },
+        },
+        tooltip: {
+          enabled: true,
+        },
+      },
+      title: {
+        text: "Sales by Month",
+        align: "left",
+      },
+      yaxis: {
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        labels: {
+          show: false,
+          formatter: function (val) {
+            return val + "%";
+          },
+        },
+      },
+      fill: {
+        opacity: 1,
+      },
+      tooltip: {
+        y: {
+          formatter: (val) => val,
+        },
+      },
+    };
+
+    var barChart = new ApexCharts(
+      document.querySelector("#barChart"),
+      barOptions
+    );
+    barChart.render();
+
+    var lineChart = {
+      series: [
+        {
+          name: "Sales",
+          data: newData,
+        },
+      ],
+      chart: {
+        width: "100%",
+        height: 350,
+        type: "line",
+        zoom: {
+          enabled: false,
+        },
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: "straight",
+      },
+      title: {
+        text: "Sales by Month",
+        align: "left",
+      },
+      grid: {
+        row: {
+          colors: ["#f3f3f3", "transparent"], // takes an array which will be repeated on columns
+          opacity: 0.5,
+        },
+      },
+      xaxis: {
+        categories: months,
+      },
+    };
+
+    var lineChart = new ApexCharts(
+      document.querySelector("#lineChart"),
+      lineChart
+    );
+    lineChart.render();
+
+    var pieOptions = {
+      series: lineChartData,
+      chart: {
+        width: "100%",
+        height: 350,
+        type: "pie",
+      },
+      labels: months,
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+
+    var pieChart = new ApexCharts(
+      document.querySelector("#pieChart"),
+      pieOptions
+    );
+    pieChart.render();
+  </script>
+</html>

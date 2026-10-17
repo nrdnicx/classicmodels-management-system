@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Employee</title>
+    <style>
+      form {
+        width: 50%;
+      }
+      input {
+        width: 100%;
+        margin-bottom: 0.3rem;
+      }
+      button {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <h4>Add New Employee</h4>
+      <form action="/employees/add" method="POST">
+        <label>First Name</label>
+        <input type="text" name="firstName" required />
+        <label>Last Name</label>
+        <input type="text" name="lastName" required />
+        <label>Job Title</label>
+        <input type="text" name="jobTitle" required />
+        <label>Email</label>
+        <input type="email" name="email" required />
+
+        <button type="submit">Submit</button>
+        <button type="button">Cancel</button>
+      </form>
+    </div>
+  </body>
+</html>
